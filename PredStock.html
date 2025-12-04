@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PredictStock AI | Previsão de Demanda com IA para E-commerce</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #7209b7;
+            --accent: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --success: #4ade80;
+            --danger: #f43f5e;
+            --warning: #f59e0b;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.12);
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        h3 {
+            font-size: 1.8rem;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 32px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-accent {
+            background-color: var(--accent);
+            color: var(--dark);
+        }
+
+        .btn-accent:hover {
+            background-color: #38b2d6;
+        }
+
+        .btn-app {
+            background-color: var(--dark);
+            color: white;
+        }
+
+        .btn-app:hover {
+            background-color: #343a40;
+        }
+
+        .btn-app-store {
+            background-color: #000;
+            color: white;
+        }
+
+        .btn-google-play {
+            background-color: #1a73e8;
+            color: white;
+        }
+
+        section {
+            padding: 100px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background-color: var(--primary);
+            border-radius: 2px;
+        }
+
+        /* Header */
+        header {
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(10px);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            font-size: 1.8rem;
+            color: var(--primary);
+        }
+
+        .logo-icon {
+            color: var(--accent);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--dark);
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding-top: 180px;
+            background: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="%234361ee" opacity="0.03"/></svg>');
+            background-size: cover;
+        }
+
+        .hero-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 50px;
+        }
+
+        .hero-text {
+            flex: 1;
+        }
+
+        .hero-text h1 {
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-text p {
+            font-size: 1.2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .hero-image {
+            flex: 1;
+            position: relative;
+        }
+
+        .hero-image img {
+            max-width: 100%;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Features */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 40px 30px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background-color: rgba(67, 97, 238, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            color: var(--primary);
+            font-size: 1.8rem;
+        }
+
+        /* How It Works */
+        .how-it-works {
+            background-color: var(--light);
+        }
+
+        .steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .steps::before {
+            content: '';
+            position: absolute;
+            top: 40px;
+            left: 50px;
+            right: 50px;
+            height: 4px;
+            background-color: var(--light-gray);
+            z-index: 1;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-number {
+            width: 80px;
+            height: 80px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 auto 25px;
+            box-shadow: 0 10px 20px rgba(67, 97, 238, 0.2);
+        }
+
+        /* App Section */
+        .app-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-content {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+        }
+
+        .app-text {
+            flex: 1;
+        }
+
+        .app-features {
+            margin: 30px 0;
+            list-style: none;
+        }
+
+        .app-features li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .app-features i {
+            color: var(--success);
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .app-download-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .app-download-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            background-color: var(--dark);
+            color: white;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            transition: var(--transition);
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .app-download-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+        }
+
+        .app-download-btn.app-store {
+            background-color: #000;
+        }
+
+        .app-download-btn.google-play {
+            background-color: #1a73e8;
+        }
+
+        .app-download-btn i {
+            font-size: 1.8rem;
+        }
+
+        .app-download-btn span {
+            display: flex;
+            flex-direction: column;
+            font-size: 0.8rem;
+        }
+
+        .app-download-btn span strong {
+            font-size: 1.1rem;
+        }
+
+        .app-phone {
+            flex: 1;
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+
+        .phone-mockup {
+            width: 280px;
+            height: 560px;
+            background: #1a1a2e;
+            border-radius: 40px;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 10px solid #0f0f1a;
+            overflow: hidden;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 30px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .phone-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 25px;
+            background: #0f0f1a;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            z-index: 10;
+        }
+
+        .phone-content {
+            padding: 50px 20px 20px;
+            color: white;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .app-logo i {
+            font-size: 2rem;
+            color: var(--accent);
+        }
+
+        .app-logo span {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .app-screen-content h3 {
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .app-feature-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 15px;
+            border-radius: 10px;
+        }
+
+        .app-feature-item i {
+            color: var(--accent);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Pricing */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 50px 40px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .pricing-card.popular {
+            border: 3px solid var(--primary);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--primary);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .price {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--dark);
+            margin: 20px 0;
+        }
+
+        .price span {
+            font-size: 1.2rem;
+            color: var(--gray);
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .pricing-features li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .pricing-features i {
+            color: var(--success);
+            margin-right: 10px;
+        }
+
+        /* CTA */
+        .cta {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="white" opacity="0.05"/></svg>');
+            background-size: cover;
+        }
+
+        .cta h2, .cta p {
+            color: white;
+        }
+
+        .cta h2 {
+            margin-bottom: 20px;
+        }
+
+        .cta p {
+            max-width: 700px;
+            margin: 0 auto 40px;
+            opacity: 0.9;
+        }
+
+        .cta .btn {
+            background-color: white;
+            color: var(--primary);
+        }
+
+        .cta .btn:hover {
+            background-color: var(--light-gray);
+        }
+
+        .cta-options {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .cta-option-btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .cta-option-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 80px 0 30px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+
+        .footer-column h3 {
+            color: white;
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: #adb5bd;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #adb5bd;
+            font-size: 0.9rem;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            h1 { font-size: 2.8rem; }
+            h2 { font-size: 2.2rem; }
+            
+            .hero-content, .app-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .hero-btns {
+                justify-content: center;
+            }
+            
+            .hero::before {
+                display: none;
+            }
+            
+            .app-phone {
+                order: -1;
+            }
+            
+            .phone-mockup {
+                width: 250px;
+                height: 500px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            section { padding: 70px 0; }
+            
+            nav {
+                position: fixed;
+                top: 80px;
+                left: 0;
+                width: 100%;
+                background-color: white;
+                padding: 20px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                transform: translateY(-100%);
+                opacity: 0;
+                transition: var(--transition);
+                z-index: 999;
+            }
+            
+            nav.active {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .steps {
+                flex-direction: column;
+                gap: 50px;
+            }
+            
+            .steps::before {
+                top: 0;
+                left: 50%;
+                width: 4px;
+                height: 100%;
+                transform: translateX(-50%);
+            }
+            
+            .app-download-buttons {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            h1 { font-size: 2.3rem; }
+            h2 { font-size: 1.8rem; }
+            
+            .hero-btns {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .app-download-btn {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <i class="fas fa-brain logo-icon"></i>
+                <span>PredictStock AI</span>
+            </div>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <nav id="mainNav">
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#features">Funcionalidades</a></li>
+                    <li><a href="#how-it-works">Como Funciona</a></li>
+                    <li><a href="#app">App</a></li>
+                    <li><a href="#pricing">Planos</a></li>
+                    <li><a href="#cta">Teste Grátis</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>Previsão de Demanda com IA para seu E-commerce</h1>
+                    <p>Reduza o excesso de estoque e evite a falta de produtos com algoritmos de aprendizado de máquina que analisam histórico de vendas, sazonalidade e tendências.</p>
+                    <div class="hero-btns">
+                        <a href="#cta" class="btn">Começar Agora</a>
+                        <a href="#app" class="btn btn-secondary">Baixar App</a>
+                    </div>
+                    <div class="hero-stats">
+                        <p><i class="fas fa-check-circle" style="color: var(--success); margin-top: 30px;"></i> ROI claro e mensurável</p>
+                        <p><i class="fas fa-check-circle" style="color: var(--success);"></i> Integração com Shopify, WooCommerce e Bling</p>
+                        <p><i class="fas fa-check-circle" style="color: var(--success);"></i> Redução de até 30% em custos de estoque</p>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Dashboard de previsão de demanda">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Funcionalidades Principais</h2>
+                <p>Descubra como o PredictStock AI transforma a gestão do seu estoque</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Previsão Inteligente</h3>
+                    <p>Utilizamos algoritmos avançados de IA (Facebook Prophet e XGBoost) para prever a demanda de cada produto com base em histórico, sazonalidade e eventos.</p>
+                </div>
+                
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>Sugestões Automatizadas</h3>
+                    <p>Receba recomendações automáticas de reabastecimento baseadas nas previsões de demanda, otimizando seu capital de giro.</p>
+                </div>
+                
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <h3>Integração Completa</h3>
+                    <p>Conecte-se facilmente com as principais plataformas de e-commerce e ERPs nacionais como Shopify, WooCommerce, Bling e Tiny.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="section-title">
+                <h2>Como Funciona</h2>
+                <p>Implementação técnica simplificada para resultados poderosos</p>
+            </div>
+            
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Integração</h3>
+                    <p>Conecte sua loja virtual ou ERP em minutos através de API segura.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Análise de Dados</h3>
+                    <p>Nossa IA analisa histórico de vendas, sazonalidade e tendências do mercado.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Previsão</h3>
+                    <p>Geração de previsões de demanda precisas para cada SKU do seu catálogo.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Recomendações</h3>
+                    <p>Receba sugestões de reabastecimento automatizadas para otimizar seu estoque.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- App Section -->
+    <section class="app-section" id="app">
+        <div class="container">
+            <div class="section-title">
+                <h2>Aplicativo PredictStock AI</h2>
+                <p>Gerencie seu estoque de qualquer lugar, a qualquer momento</p>
+            </div>
+            
+            <div class="app-content">
+                <div class="app-text">
+                    <h3>Controle Total na Palma da Sua Mão</h3>
+                    <p>Com nosso aplicativo móvel, você tem acesso a todas as funcionalidades da plataforma web, além de notificações em tempo real sobre mudanças críticas no seu estoque.</p>
+                    
+                    <ul class="app-features">
+                        <li><i class="fas fa-check-circle"></i> <strong>Alertas instantâneos</strong> sobre estoque baixo ou excedente</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Dashboard móvel</strong> com os principais KPIs do seu negócio</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Aprovação rápida</strong> de pedidos de compra sugeridos pela IA</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Sincronização em tempo real</strong> com a plataforma web</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Suporte 24/7</strong> via chat integrado no aplicativo</li>
+                    </ul>
+                    
+                    <div class="app-download-buttons">
+                        <a href="#" class="app-download-btn app-store" id="downloadIos">
+                            <i class="fab fa-apple"></i>
+                            <span>
+                                <strong>Download na</strong>
+                                App Store
+                            </span>
+                        </a>
+                        
+                        <a href="#" class="app-download-btn google-play" id="downloadAndroid">
+                            <i class="fab fa-google-play"></i>
+                            <span>
+                                <strong>Disponível no</strong>
+                                Google Play
+                            </span>
+                        </a>
+                    </div>
+                    
+                    <p style="margin-top: 20px; font-size: 0.9rem;">Também disponível como <a href="#" style="color: var(--primary); font-weight: 500;">PWA</a> (Progressive Web App) para usar diretamente no navegador.</p>
+                </div>
+                
+                <div class="app-phone">
+                    <div class="phone-mockup">
+                        <div class="phone-notch"></div>
+                        <div class="phone-screen">
+                            <div class="phone-content">
+                                <div class="app-logo">
+                                    <i class="fas fa-brain"></i>
+                                    <span>PredictStock</span>
+                                </div>
+                                
+                                <div class="app-screen-content">
+                                    <h3>Dashboard</h3>
+                                    
+                                    <div class="app-feature-item">
+                                        <i class="fas fa-box"></i>
+                                        <div>
+                                            <strong>Estoque Crítico</strong>
+                                            <small>3 produtos abaixo do mínimo</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="app-feature-item">
+                                        <i class="fas fa-chart-bar"></i>
+                                        <div>
+                                            <strong>Previsão de Demanda</strong>
+                                            <small>+12% na próxima semana</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="app-feature-item">
+                                        <i class="fas fa-shopping-cart"></i>
+                                        <div>
+                                            <strong>Sugestão de Compra</strong>
+                                            <small>5 itens para reabastecer</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="app-feature-item">
+                                        <i class="fas fa-bell"></i>
+                                        <div>
+                                            <strong>Alertas</strong>
+                                            <small>Black Friday em 15 dias</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing">
+        <div class="container">
+            <div class="section-title">
+                <h2>Planos e Preços</h2>
+                <p>Escolha o plano ideal para o tamanho do seu e-commerce</p>
+            </div>
+            
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3>Básico</h3>
+                    <div class="price">R$ 199<span>/mês</span></div>
+                    <p>Ideal para pequenos e-commerces</p>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Até 1.000 pedidos/mês analisados</li>
+                        <li><i class="fas fa-check"></i> Previsão de demanda por SKU</li>
+                        <li><i class="fas fa-check"></i> Integração com 1 plataforma</li>
+                        <li><i class="fas fa-check"></i> Dashboard básico</li>
+                        <li><i class="fas fa-check"></i> Aplicativo móvel básico</li>
+                        <li><i class="fas fa-times" style="color: var(--danger);"></i> Sugestão de compra automatizada</li>
+                    </ul>
+                    <a href="#cta" class="btn btn-secondary">Escolher Plano</a>
+                </div>
+                
+                <div class="pricing-card popular">
+                    <div class="popular-badge">Mais Popular</div>
+                    <h3>Profissional</h3>
+                    <div class="price">R$ 499<span>/mês</span></div>
+                    <p>Perfeito para e-commerces em crescimento</p>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Análise ilimitada de pedidos</li>
+                        <li><i class="fas fa-check"></i> Previsão de demanda por SKU</li>
+                        <li><i class="fas fa-check"></i> Integração com até 3 plataformas</li>
+                        <li><i class="fas fa-check"></i> Dashboard avançado</li>
+                        <li><i class="fas fa-check"></i> Aplicativo móvel completo</li>
+                        <li><i class="fas fa-check"></i> Sugestão de compra automatizada</li>
+                        <li><i class="fas fa-check"></i> Suporte prioritário</li>
+                    </ul>
+                    <a href="#cta" class="btn">Escolher Plano</a>
+                </div>
+            </div>
+            
+            <div class="pricing-info" style="text-align: center; margin-top: 50px;">
+                <p><strong>Ponto de equilíbrio:</strong> Com apenas 3 clientes no plano básico, já cobrimos nossos custos operacionais!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta" id="cta">
+        <div class="container">
+            <h2>Comece a otimizar seu estoque hoje mesmo</h2>
+            <p>Experimente o PredictStock AI por 14 dias gratuitamente. Sem compromisso, sem cartão de crédito necessário.</p>
+            
+            <div class="cta-options">
+                <a href="#trial-form" class="cta-option-btn" id="showTrialForm">Teste Gratuito (Web)</a>
+                <a href="#app" class="cta-option-btn">Baixar Aplicativo</a>
+                <a href="#demo" class="cta-option-btn" id="showDemoRequest">Agendar Demonstração</a>
+            </div>
+            
+            <!-- Trial Form -->
+            <div id="trial-form" style="max-width: 500px; margin: 40px auto 0; display: block;">
+                <form id="ctaForm">
+                    <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px;">
+                        <input type="text" id="name" placeholder="Seu nome completo" required style="padding: 16px; border-radius: var(--border-radius); border: none; font-size: 1rem;">
+                        <input type="email" id="email" placeholder="Seu melhor e-mail" required style="padding: 16px; border-radius: var(--border-radius); border: none; font-size: 1rem;">
+                        <input type="text" id="company" placeholder="Nome da sua empresa" required style="padding: 16px; border-radius: var(--border-radius); border: none; font-size: 1rem;">
+                        <select id="platform" style="padding: 16px; border-radius: var(--border-radius); border: none; font-size: 1rem; color: var(--gray);">
+                            <option value="">Plataforma de e-commerce principal</option>
+                            <option value="shopify">Shopify</option>
+                            <option value="woocommerce">WooCommerce</option>
+                            <option value="bling">Bling</option>
+                            <option value="tiny">Tiny</option>
+                            <option value="vtex">VTEX</option>
+                            <option value="outra">Outra</option>
+                        </select>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" id="app-interest" style="width: auto;">
+                            <label for="app-interest" style="color: white; font-size: 0.9rem;">Também quero testar o aplicativo móvel</label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn">Experimente Grátis por 14 Dias</button>
+                </form>
+            </div>
+            
+            <!-- Demo Request Form (Initially Hidden) -->
+            <div id="demo-request" style="max-width: 500px; margin: 40px auto 0; display: none;">
+                <form id="demoForm">
+                    <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px;">
+                        <input type="text" id="demo-name" placeholder="Seu nome completo" required style="padding: 16px; border-radius: var(--border-radius); border: none; font-size: 1rem;">
+                        <input type="email" id="demo-email" placeholder="Seu melhor e-mail" required style="padding: 16px; border-radius: var(--border-radius); border: none; font-size: 1rem;">
+                        <input type="text" id="demo-company" placeholder="Nome da sua empresa" required style="padding: 16px; border-radius: var(--border-radius); border: none; font-size: 1rem;">
+                        <input type="tel" id="demo-phone" placeholder="Seu telefone" style="padding: 16px; border-radius: var(--border-radius); border: none; font-size: 1rem;">
+                        <select id="demo-time" style="padding: 16px; border-radius: var(--border-radius); border: none; font-size: 1rem; color: var(--gray);">
+                            <option value="">Melhor horário para contato</option>
+                            <option value="manha">Manhã (9h-12h)</option>
+                            <option value="tarde">Tarde (14h-18h)</option>
+                            <option value="noite">Noite (18h-20h)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn">Solicitar Demonstração</button>
+                </form>
+            </div>
+            
+            <p style="margin-top: 20px; font-size: 0.9rem;">Ao clicar, você concorda com nossos Termos de Serviço e Política de Privacidade.</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <div class="logo" style="color: white; margin-bottom: 20px;">
+                        <i class="fas fa-brain logo-icon"></i>
+                        <span>PredictStock AI</span>
+                    </div>
+                    <p>Sistema de previsão de demanda com IA para varejo eletrônico. Reduza o overstock e evite o stockout com tecnologia de ponta.</p>
+                    <div class="app-download-buttons" style="margin-top: 20px;">
+                        <a href="#" class="app-download-btn app-store" style="padding: 10px 15px;">
+                            <i class="fab fa-apple"></i>
+                            <span style="font-size: 0.7rem;">
+                                <strong>App Store</strong>
+                            </span>
+                        </a>
+                        <a href="#" class="app-download-btn google-play" style="padding: 10px 15px;">
+                            <i class="fab fa-google-play"></i>
+                            <span style="font-size: 0.7rem;">
+                                <strong>Google Play</strong>
+                            </span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Links Rápidos</h3>
+                    <ul class="footer-links">
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#features">Funcionalidades</a></li>
+                        <li><a href="#how-it-works">Como Funciona</a></li>
+                        <li><a href="#app">Aplicativo</a></li>
+                        <li><a href="#pricing">Planos</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Recursos</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Documentação</a></li>
+                        <li><a href="#">API Developers</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Status do Sistema</a></li>
+                        <li><a href="#app">Download do App</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Contato</h3>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-envelope"></i> contato@predictstock.ai</li>
+                        <li><i class="fas fa-phone"></i> (61) 99999-9999</li>
+                        <li><i class="fas fa-map-marker-alt"></i> Goiania - GO </li>
+                        <li><i class="fab fa-whatsapp" style="color: #25D366;"></i> Suporte via WhatsApp</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2023 PredictStock AI. Todos os direitos reservados.</p>
+                <p>Este projeto é um MVP 3.1 - Análise de Viabilidade Técnica e Econômica</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mainNav = document.getElementById('mainNav');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mainNav.classList.toggle('active');
+            mobileMenuBtn.innerHTML = mainNav.classList.contains('active') 
+                ? '<i class="fas fa-times"></i>' 
+                : '<i class="fas fa-bars"></i>';
+        });
+        
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                mainNav.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+        
+        // Form submission
+        const ctaForm = document.getElementById('ctaForm');
+        const demoForm = document.getElementById('demoForm');
+        
+        ctaForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const company = document.getElementById('company').value;
+            const platform = document.getElementById('platform').value;
+            const appInterest = document.getElementById('app-interest').checked;
+            
+            // Simple validation
+            if (name && email && company) {
+                // In a real application, you would send this data to your backend
+                let message = `Obrigado, ${name}! Sua solicitação de teste gratuito para a empresa ${company} foi enviada com sucesso. Em breve nossa equipe entrará em contato no e-mail ${email}.`;
+                
+                if (appInterest) {
+                    message += "\n\nVocê também receberá instruções para baixar nosso aplicativo móvel.";
+                }
+                
+                alert(message);
+                
+                // Reset form
+                ctaForm.reset();
+                
+                // Scroll to top
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            } else {
+                alert('Por favor, preencha todos os campos obrigatórios.');
+            }
+        });
+        
+        demoForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('demo-name').value;
+            const email = document.getElementById('demo-email').value;
+            const company = document.getElementById('demo-company').value;
+            
+            // Simple validation
+            if (name && email && company) {
+                alert(`Obrigado, ${name}! Sua solicitação de demonstração para a empresa ${company} foi agendada. Nossa equipe entrará em contato em breve no e-mail ${email} para confirmar o horário.`);
+                
+                // Reset form
+                demoForm.reset();
+                
+                // Scroll to top
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            } else {
+                alert('Por favor, preencha todos os campos obrigatórios.');
+            }
+        });
+        
+        // App download buttons
+        document.getElementById('downloadIos').addEventListener('click', (e) => {
+            e.preventDefault();
+            alert('Redirecionando para a App Store...\n\nEm um cenário real, você seria direcionado para a página de download do aplicativo na App Store.');
+        });
+        
+        document.getElementById('downloadAndroid').addEventListener('click', (e) => {
+            e.preventDefault();
+            alert('Redirecionando para o Google Play...\n\nEm um cenário real, você seria direcionado para a página de download do aplicativo no Google Play.');
+        });
+        
+        // CTA Options
+        document.getElementById('showTrialForm').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('trial-form').style.display = 'block';
+            document.getElementById('demo-request').style.display = 'none';
+            window.scrollTo({
+                top: document.getElementById('cta').offsetTop + 200,
+                behavior: 'smooth'
+            });
+        });
+        
+        document.getElementById('showDemoRequest').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('trial-form').style.display = 'none';
+            document.getElementById('demo-request').style.display = 'block';
+            window.scrollTo({
+                top: document.getElementById('cta').offsetTop + 200,
+                behavior: 'smooth'
+            });
+        });
+        
+        // Scroll animations
+        const fadeElements = document.querySelectorAll('.fade-in');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationDelay = entry.target.dataset.delay || '0s';
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+        
+        fadeElements.forEach((el, index) => {
+            el.dataset.delay = `${index * 0.1}s`;
+            observer.observe(el);
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Add active class to nav links based on scroll position
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('nav a');
+            
+            let current = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (scrollY >= (sectionTop - 150)) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
